@@ -9,3 +9,4 @@ C:\Users\Kurdicks\RiderProjects\WebApplication1\Models\obj\Debug\net9.0\Models.d
 C:\Users\Kurdicks\RiderProjects\WebApplication1\Models\obj\Debug\net9.0\refint\Models.dll
 C:\Users\Kurdicks\RiderProjects\WebApplication1\Models\obj\Debug\net9.0\Models.pdb
 C:\Users\Kurdicks\RiderProjects\WebApplication1\Models\obj\Debug\net9.0\ref\Models.dll
+C:\Users\Kurdicks\RiderProjects\WebApplication1\Models\obj\Debug\net9.0\Models.sourcelink.json

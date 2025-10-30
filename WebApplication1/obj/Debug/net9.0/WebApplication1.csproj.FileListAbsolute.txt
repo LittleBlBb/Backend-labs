@@ -118,3 +118,5 @@ C:\Users\Kurdicks\RiderProjects\WebApplication1\WebApplication1\bin\Debug\net9.0
 C:\Users\Kurdicks\RiderProjects\WebApplication1\WebApplication1\bin\Debug\net9.0\Oms.pdb
 C:\Users\Kurdicks\RiderProjects\WebApplication1\WebApplication1\bin\Debug\net9.0\Common.pdb
 C:\Users\Kurdicks\RiderProjects\WebApplication1\WebApplication1\bin\Debug\net9.0\Messages.pdb
+C:\Users\Kurdicks\RiderProjects\WebApplication1\WebApplication1\bin\Debug\net9.0\appsettingsDevelopment.json
+C:\Users\Kurdicks\RiderProjects\WebApplication1\WebApplication1\obj\Debug\net9.0\WebApplication1.sourcelink.json

@@ -13,3 +13,4 @@ C:\Users\Kurdicks\RiderProjects\WebApplication1\Messages\obj\Debug\net9.0\Messag
 C:\Users\Kurdicks\RiderProjects\WebApplication1\Messages\obj\Debug\net9.0\refint\Messages.dll
 C:\Users\Kurdicks\RiderProjects\WebApplication1\Messages\obj\Debug\net9.0\Messages.pdb
 C:\Users\Kurdicks\RiderProjects\WebApplication1\Messages\obj\Debug\net9.0\ref\Messages.dll
+C:\Users\Kurdicks\RiderProjects\WebApplication1\Messages\obj\Debug\net9.0\Messages.sourcelink.json

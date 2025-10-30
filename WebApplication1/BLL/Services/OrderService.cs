@@ -6,6 +6,9 @@ using WebApplication.BLL.Models;
 using WebApplication1.DAL;
 using WebApplication1.DAL.Interfaces;
 using WebApplication1.DAL.Models;
+using OrderItemUnit = Models.Dto.Common.OrderItemUnit;
+using OrderUnit = Models.Dto.Common.OrderUnit;
+
 namespace WebApplication1.BLL.Services;
 
 
@@ -100,7 +103,7 @@ public class OrderService(
                 TotalPriceCurrency = order.TotalPriceCurrency,
                 CreatedAt = order.CreatedAt,
                 UpdatedAt = order.UpdatedAt,
-                OrderItems = order.OrderItems.Select(oi => new Models.Dto.Common.OrderItemUnit
+                OrderItems = order.OrderItems.Select(oi => new OrderItemUnit
                 {
                     Id = oi.Id,
                     OrderId = oi.OrderId,
