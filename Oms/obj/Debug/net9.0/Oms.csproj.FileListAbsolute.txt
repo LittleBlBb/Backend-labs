@@ -38,5 +38,5 @@ C:\Users\Kurdicks\RiderProjects\WebApplication1\Oms\obj\Debug\net9.0\Oms.pdb
 C:\Users\Kurdicks\RiderProjects\WebApplication1\Oms\obj\Debug\net9.0\Oms.genruntimeconfig.cache
 C:\Users\Kurdicks\RiderProjects\WebApplication1\Oms\obj\Debug\net9.0\ref\Oms.dll
 C:\Users\Kurdicks\RiderProjects\WebApplication1\Oms\bin\Debug\net9.0\appsettings.json
-C:\Users\Kurdicks\RiderProjects\WebApplication1\Oms\bin\Debug\net9.0\appsettingsDevelopment.json
 C:\Users\Kurdicks\RiderProjects\WebApplication1\Oms\obj\Debug\net9.0\Oms.sourcelink.json
+C:\Users\Kurdicks\RiderProjects\WebApplication1\Oms\bin\Debug\net9.0\appsettings.Development.json

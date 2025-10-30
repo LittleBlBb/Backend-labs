@@ -4172,6 +4172,7 @@
       "Dapper >= 2.1.66",
       "FluentValidation >= 11.11.0",
       "FluentValidation.AspNetCore >= 11.3.0",
+      "Messages >= 1.0.0",
       "Microsoft.AspNetCore.OpenApi >= 9.0.1",
       "Migrations >= 1.0.0",
       "Models >= 1.0.0",
@@ -4211,6 +4212,9 @@
         "net9.0": {
           "targetAlias": "net9.0",
           "projectReferences": {
+            "C:\\Users\\Kurdicks\\RiderProjects\\WebApplication1\\Messages\\Messages.csproj": {
+              "projectPath": "C:\\Users\\Kurdicks\\RiderProjects\\WebApplication1\\Messages\\Messages.csproj"
+            },
             "C:\\Users\\Kurdicks\\RiderProjects\\WebApplication1\\Migrations\\Migrations.csproj": {
               "projectPath": "C:\\Users\\Kurdicks\\RiderProjects\\WebApplication1\\Migrations\\Migrations.csproj"
             },

@@ -11,6 +11,7 @@
           "Dapper": "2.1.66",
           "FluentValidation": "11.11.0",
           "FluentValidation.AspNetCore": "11.3.0",
+          "Messages": "1.0.0",
           "Microsoft.AspNetCore.OpenApi": "9.0.1",
           "Migrations": "1.0.0",
           "Models": "1.0.0",

@@ -421,6 +421,9 @@
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
+              "C:\\Users\\Kurdicks\\RiderProjects\\WebApplication1\\Messages\\Messages.csproj": {
+                "projectPath": "C:\\Users\\Kurdicks\\RiderProjects\\WebApplication1\\Messages\\Messages.csproj"
+              },
               "C:\\Users\\Kurdicks\\RiderProjects\\WebApplication1\\Migrations\\Migrations.csproj": {
                 "projectPath": "C:\\Users\\Kurdicks\\RiderProjects\\WebApplication1\\Migrations\\Migrations.csproj"
               },
