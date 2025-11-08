@@ -1,4 +1,4 @@
-﻿namespace WebApplication.BLL.Models;
+﻿namespace WebApplication1.BLL.Models;
 
 public class OrderItemUnit
 {

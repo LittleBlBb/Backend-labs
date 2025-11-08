@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Options;
 using Oms.Config;
 using Oms.Services;
-using WebApplication.BLL.Models;
+using WebApplication1.BLL.Models;
 using WebApplication1.DAL;
 using WebApplication1.DAL.Interfaces;
 using WebApplication1.DAL.Models;
