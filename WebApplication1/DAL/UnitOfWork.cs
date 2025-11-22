@@ -1,10 +1,12 @@
-﻿using WebApplication1.Dal;
-using WebApplication1.DAL.Models;
-
-namespace WebApplication1.DAL;
+﻿using System;
 using System.Data;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Npgsql;
+using WebApi.DAL.Models;
+
+namespace WebApi.DAL;
 
 public class UnitOfWork(IOptions<DbSettings> dbSettings): IDisposable
 {
@@ -18,10 +20,12 @@ public class UnitOfWork(IOptions<DbSettings> dbSettings): IDisposable
         }
         
         var dataSource = new NpgsqlDataSourceBuilder(dbSettings.Value.ConnectionString);
-        
+       
         dataSource.MapComposite<V1OrderDal>("v1_order");
         dataSource.MapComposite<V1OrderItemDal>("v1_order_item");
-        
+        dataSource.MapComposite<V1AuditLogOrderDal>("v1_audit_log_order");
+
+
         _connection = dataSource.Build().CreateConnection();
         _connection.StateChange += (sender, args) =>
         {

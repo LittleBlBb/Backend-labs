@@ -1,5 +1,4 @@
-﻿namespace WebApplication1.DAL.Models;
-public class QueryOrderItemsDalModel
+﻿public class QueryOrderItemsDalModel
 {
     public long[] Ids { get; set; }
 

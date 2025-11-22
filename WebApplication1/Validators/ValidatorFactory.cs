@@ -1,6 +1,4 @@
-﻿using FluentValidation;
-
-namespace WebApplication1.Validators;
+﻿using FluentValidation; 
 
 public class ValidatorFactory(IServiceProvider serviceProvider)
 {

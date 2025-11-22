@@ -1,151 +1,83 @@
-﻿using Messages;
-using Microsoft.Extensions.Options;
-using Oms.Config;
-using Oms.Services;
-using WebApplication1.BLL.Models;
-using WebApplication1.DAL;
-using WebApplication1.DAL.Interfaces;
-using WebApplication1.DAL.Models;
-using OrderItemUnit = Models.Dto.Common.OrderItemUnit;
-using OrderUnit = Models.Dto.Common.OrderUnit;
+﻿using WebApi.DAL;
 
-namespace WebApplication1.BLL.Services;
-
-
-public class OrderService(
-    UnitOfWork unitOfWork,
-    IOrderRepository orderRepository,
-    IOrderItemRepository orderItemRepository,
-    RabbitMqService rabbitMqService,
-    IOptions<RabbitMqSettings> settings)
+public class OrderService(UnitOfWork unitOfWork, IOrderRepository orderRepository, IOrderItemRepository orderItemRepository)
 {
-    public async Task<OrderUnit[]> BatchInsert(OrderUnit[] orderUnits, CancellationToken token)
-{
-    var now = DateTimeOffset.UtcNow;
-    await using var transaction = await unitOfWork.BeginTransactionAsync(token);
-
-    if (orderUnits == null || orderUnits.Length == 0)
-        return Array.Empty<OrderUnit>();
-
-    try
+    /// <summary>
+    /// Метод создания заказов
+    /// </summary>
+public async Task<OrderUnit[]> BatchInsert(OrderUnit[] orderUnits, CancellationToken token)
     {
-        var orderDals = orderUnits.Select(order => new V1OrderDal
-        {
-            CustomerId = order.CustomerId,
-            DeliveryAddress = order.DeliveryAddress,
-            TotalPriceCents = order.TotalPriceCents,
-            TotalPriceCurrency = order.TotalPriceCurrency,
-            CreatedAt = now,
-            UpdatedAt = now
-        }).ToArray();
+        var now = DateTimeOffset.UtcNow;
+        await using var transaction = await unitOfWork.BeginTransactionAsync(token);
 
-        var insertedOrders = await orderRepository.BulkInsert(orderDals, token);
-        var resultOrders = new List<OrderUnit>();
-
-        for (int i = 0; i < insertedOrders.Length; i++)
-        {
-            var orderUnit = orderUnits[i];
-            var insertedOrder = insertedOrders[i];
-            var orderId = insertedOrder.Id;
-
-            var orderItemDals = orderUnit.OrderItems?.Select(item => new V1OrderItemDal
-            {
-                OrderId = orderId,
-                ProductId = item.ProductId,
-                Quantity = item.Quantity,
-                ProductTitle = item.ProductTitle,
-                ProductUrl = item.ProductUrl,
-                PriceCents = item.PriceCents,
-                PriceCurrency = item.PriceCurrency,
-                CreatedAt = now,
-                UpdatedAt = now
-            }).ToArray() ?? Array.Empty<V1OrderItemDal>();
-
-            var insertedOrderItems = await orderItemRepository.BulkInsert(orderItemDals, token);
-
-            resultOrders.Add(new OrderUnit
-            {
-                Id = insertedOrder.Id,
-                CustomerId = insertedOrder.CustomerId,
-                DeliveryAddress = insertedOrder.DeliveryAddress,
-                TotalPriceCents = insertedOrder.TotalPriceCents,
-                TotalPriceCurrency = insertedOrder.TotalPriceCurrency,
-                CreatedAt = now,
-                UpdatedAt = now,
-                OrderItems = insertedOrderItems.Select(item => new OrderItemUnit
-                {
-                    Id = item.Id,
-                    OrderId = item.OrderId,
-                    ProductId = item.ProductId,
-                    Quantity = item.Quantity,
-                    ProductTitle = item.ProductTitle,
-                    ProductUrl = item.ProductUrl,
-                    PriceCents = item.PriceCents,
-                    PriceCurrency = item.PriceCurrency,
-                    CreatedAt = item.CreatedAt,
-                    UpdatedAt = item.UpdatedAt
-                }).ToArray()
-            });
-        }
-
-        // --- Коммитим изменения в БД ---
-        await transaction.CommitAsync(token);
-
-        // --- После успешного коммита публикуем в RabbitMQ ---
         try
         {
-            var messages = resultOrders.Select(order => new OrderCreatedMessage
+            var ordersDal = orderUnits.Select(o => new V1OrderDal
             {
-                Id = order.Id,
-                CustomerId = order.CustomerId,
-                DeliveryAddress = order.DeliveryAddress,
-                TotalPriceCents = order.TotalPriceCents,
-                TotalPriceCurrency = order.TotalPriceCurrency,
-                CreatedAt = order.CreatedAt,
-                UpdatedAt = order.UpdatedAt,
-                OrderItems = order.OrderItems.Select(oi => new OrderItemUnit
+                CustomerId = o.CustomerId,
+                DeliveryAddress = o.DeliveryAddress,
+                TotalPriceCents = o.TotalPriceCents,
+                TotalPriceCurrency = o.TotalPriceCurrency,
+                CreatedAt = now,
+                UpdatedAt = now
+            }).ToArray();
+
+            var insertedOrders = await orderRepository.BulkInsert(ordersDal, token);
+
+            var itemsDal = orderUnits
+                .SelectMany((o, idx) => o.OrderItems.Select(i => new V1OrderItemDal
                 {
-                    Id = oi.Id,
-                    OrderId = oi.OrderId,
-                    ProductId = oi.ProductId,
-                    Quantity = oi.Quantity,
-                    ProductTitle = oi.ProductTitle,
-                    ProductUrl = oi.ProductUrl,
-                    PriceCents = oi.PriceCents,
-                    PriceCurrency = oi.PriceCurrency,
-                    CreatedAt = oi.CreatedAt,
-                    UpdatedAt = oi.UpdatedAt
+                    OrderId = insertedOrders[idx].Id, 
+                    ProductId = i.ProductId,
+                    Quantity = i.Quantity,
+                    ProductTitle = i.ProductTitle,
+                    ProductUrl = i.ProductUrl,
+                    PriceCents = i.PriceCents,
+                    PriceCurrency = i.PriceCurrency,
+                    CreatedAt = now,
+                    UpdatedAt = now
+                }))
+                .ToArray();
+
+            var insertedItems = await orderItemRepository.BulkInsert(itemsDal, token);
+
+            await transaction.CommitAsync(token);
+
+            var itemsLookup = insertedItems.ToLookup(x => x.OrderId);
+
+            var result = insertedOrders.Select(o => new OrderUnit
+            {
+                Id = o.Id,
+                CustomerId = o.CustomerId,
+                DeliveryAddress = o.DeliveryAddress,
+                TotalPriceCents = o.TotalPriceCents,
+                TotalPriceCurrency = o.TotalPriceCurrency,
+                CreatedAt = o.CreatedAt,
+                UpdatedAt = o.UpdatedAt,
+                OrderItems = itemsLookup[o.Id].Select(i => new OrderItemUnit
+                {
+                    Id = i.Id,
+                    OrderId = i.OrderId,
+                    ProductId = i.ProductId,
+                    Quantity = i.Quantity,
+                    ProductTitle = i.ProductTitle,
+                    ProductUrl = i.ProductUrl,
+                    PriceCents = i.PriceCents,
+                    PriceCurrency = i.PriceCurrency,
+                    CreatedAt = i.CreatedAt,
+                    UpdatedAt = i.UpdatedAt
                 }).ToArray()
             }).ToArray();
 
-            await rabbitMqService.Publish(messages, settings.Value.OrderCreatedQueue, token);
-            Console.WriteLine($"[RabbitMQ] Published {messages.Length} order(s) to queue '{settings.Value.OrderCreatedQueue}'");
+            return result;
         }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"[RabbitMQ] Failed to publish message: {ex.Message}");
-            // Не трогаем транзакцию — БД уже зафиксирована.
-        }
-
-        return resultOrders.ToArray();
-    }
-    catch (Exception)
-    {
-        // Rollback только если транзакция ещё не завершена
-        try
+        catch
         {
             await transaction.RollbackAsync(token);
+            throw;
         }
-        catch (InvalidOperationException)
-        {
-            // Игнорируем "Transaction completed" — это нормально
-        }
-
-        throw;
     }
-}
-
-
+    
     /// <summary>
     /// Метод получения заказов
     /// </summary>

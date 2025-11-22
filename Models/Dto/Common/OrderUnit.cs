@@ -1,4 +1,5 @@
 ﻿namespace Models.Dto.Common;
+
 public class OrderUnit
 {
     public long Id { get; set; }

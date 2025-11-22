@@ -1,35 +1,36 @@
-﻿using Models.Dto.V1.Requests;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Models.Dto.Common;
+using Models.Dto.V1.Requests;
 using Models.Dto.V1.Responses;
-using WebApplication1.BLL.Models;
-using WebApplication1.Validators;
-using OrderItemUnit = Models.Dto.Common.OrderItemUnit;
-using OrderUnit = Models.Dto.Common.OrderUnit;
+using FluentValidation;
+using Oms.Services;
+using Microsoft.Extensions.Options;
+using Oms.Config;
+using Messages;
 
-namespace WebApplication1.Controllers.V1;
-using BLL.Services;
-using Microsoft.AspNetCore.Mvc;
 [Route("api/v1/order")]
-public class OrderController: ControllerBase
+public class OrderController(
+    OrderService orderService, 
+    IValidatorFactory validatorFactory,
+    RabbitMqService rabbitMqService,
+    IOptions<RabbitMqSettings> settings
+) : ControllerBase
 {
-    private readonly ValidatorFactory _validatorFactory;
-    private readonly OrderService _orderService;
-
-    public OrderController(ValidatorFactory validatorFactory, OrderService orderService)
-    {
-        _validatorFactory = validatorFactory;
-        _orderService = orderService;
-    }
-
     [HttpPost("batch-create")]
     public async Task<ActionResult<V1CreateOrderResponse>> V1BatchCreate([FromBody] V1CreateOrderRequest request, CancellationToken token)
     {
-        var validationResult = await _validatorFactory.GetValidator<V1CreateOrderRequest>().ValidateAsync(request, token);
+        var validationResult = await validatorFactory.GetValidator<V1CreateOrderRequest>()
+            .ValidateAsync(request, token);
+
         if (!validationResult.IsValid)
         {
             return BadRequest(validationResult.ToDictionary());
         }
-        
-        var res = await _orderService.BatchInsert(request.Orders.Select(x => new OrderUnit
+
+        var res = await orderService.BatchInsert(request.Orders.Select(x => new OrderUnit
         {
             CustomerId = x.CustomerId,
             DeliveryAddress = x.DeliveryAddress,
@@ -46,6 +47,31 @@ public class OrderController: ControllerBase
             }).ToArray()
         }).ToArray(), token);
 
+        var messages = res.Select(x => new OrderCreatedMessage
+        {
+            Id = x.Id,
+            CustomerId = x.CustomerId,
+            DeliveryAddress = x.DeliveryAddress,
+            TotalPriceCents = x.TotalPriceCents,
+            TotalPriceCurrency = x.TotalPriceCurrency,
+            CreatedAt = x.CreatedAt,
+            UpdatedAt = x.UpdatedAt,
+            OrderItems = x.OrderItems.Select(p => new OrderItemMessage
+            {
+                Id = p.Id,
+                OrderId = p.OrderId,
+                ProductId = p.ProductId,
+                Quantity = p.Quantity,
+                ProductTitle = p.ProductTitle,
+                ProductUrl = p.ProductUrl,
+                PriceCents = p.PriceCents,
+                PriceCurrency = p.PriceCurrency,
+                CreatedAt = p.CreatedAt,
+                UpdatedAt = p.UpdatedAt
+            }).ToArray()
+        });
+
+        await rabbitMqService.Publish(messages, settings.Value.OrderCreatedQueue, token);
 
         return Ok(new V1CreateOrderResponse
         {
@@ -56,26 +82,29 @@ public class OrderController: ControllerBase
     [HttpPost("query")]
     public async Task<ActionResult<V1QueryOrdersResponse>> V1QueryOrders([FromBody] V1QueryOrdersRequest request, CancellationToken token)
     {
-        var validationResult = await _validatorFactory.GetValidator<V1QueryOrdersRequest>().ValidateAsync(request, token);
+        var validationResult = await validatorFactory.GetValidator<V1QueryOrdersRequest>()
+            .ValidateAsync(request, token);
+
         if (!validationResult.IsValid)
         {
             return BadRequest(validationResult.ToDictionary());
         }
-        
-        var res = await _orderService.GetOrders(new QueryOrderItemsModel
+
+        var res = await orderService.GetOrders(new QueryOrderItemsModel
         {
             Ids = request.Ids,
             CustomerIds = request.CustomerIds,
-            Page = request.Page ?? 0,
-            PageSize = request.PageSize ?? 0,
+            Page = request.Page,
+            PageSize = request.PageSize,
             IncludeOrderItems = request.IncludeOrderItems
         }, token);
-        
+            
         return Ok(new V1QueryOrdersResponse
         {
             Orders = Map(res)
         });
     }
+    
     private Models.Dto.Common.OrderUnit[] Map(OrderUnit[] orders)
     {
         return orders.Select(x => new Models.Dto.Common.OrderUnit

@@ -1,10 +1,12 @@
-﻿using System.Text;
-using System;
+﻿using System;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
 using Common;
 using Messages;
-using Microsoft.Extensions.Options;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Models.Dto.V1.Requests;
 using Oms.Config;
 using Oms.Consumer.Clients;
@@ -29,55 +31,87 @@ public class OmsOrderCreatedConsumer : IHostedService
         _rabbitMqSettings = rabbitMqSettings;
         _serviceProvider = serviceProvider;
         _factory = new ConnectionFactory
-            { HostName = rabbitMqSettings.Value.HostName, Port = rabbitMqSettings.Value.Port };
+        {
+            HostName = rabbitMqSettings.Value.HostName,
+            Port = rabbitMqSettings.Value.Port
+        };
     }
 
-    public async Task StartAsync(CancellationToken cancellationToken)
+     public async Task StartAsync(CancellationToken cancellationToken)
     {
         _connection = await _factory.CreateConnectionAsync(cancellationToken);
         _channel = await _connection.CreateChannelAsync(cancellationToken: cancellationToken);
         await _channel.QueueDeclareAsync(
-            queue: _rabbitMqSettings.Value.OrderCreatedQueue,
-            durable: false,
+            queue: _rabbitMqSettings.Value.OrderCreatedQueue, 
+            durable: false, 
             exclusive: false,
             autoDelete: false,
-            arguments: null,
+            arguments: null, 
             cancellationToken: cancellationToken);
 
+        var sw = new Stopwatch();
+
+        await _channel.BasicQosAsync(prefetchSize: 0, prefetchCount: 1, global: false, cancellationToken: cancellationToken);
         _consumer = new AsyncEventingBasicConsumer(_channel);
         _consumer.ReceivedAsync += async (sender, args) =>
         {
-            var body = args.Body.ToArray();
-            var message = Encoding.UTF8.GetString(body);
-            var order = message.FromJson<OmsOrderCreatedMessage>();
-
-            Console.WriteLine("Received: " + message);
-            using var scope = _serviceProvider.CreateScope();
-            var client = scope.ServiceProvider.GetRequiredService<OmsClient>();
-            await client.LogOrder(new V1AuditLogOrderRequest
+            sw.Restart();
+            try
             {
-                Orders = order.OrderItems.Select(x =>
-                    new V1AuditLogOrderRequest.LogOrder
-                    {
-                        OrderId = order.Id,
-                        OrderItemId = x.Id,
-                        CustomerId = order.CustomerId,
-                        OrderStatus = nameof(OrderStatus.Created)
-                    }).ToArray()
-            }, CancellationToken.None);
-        };
+                var body = args.Body.ToArray();
+                var payload = Encoding.UTF8.GetString(body);
+                var message = payload.FromJson<OmsOrderCreatedMessage>();
 
+                using var scope = _serviceProvider.CreateScope();
+                var client = scope.ServiceProvider.GetRequiredService<OmsClient>();
+
+                var orders = (message.OrderItems ?? Array.Empty<OrderItemMessage>())
+                    .Select(item => new V1AuditLogOrderRequest.LogOrder
+                    {
+                        OrderId = message.Id,
+                        OrderItemId = item.Id,
+                        CustomerId = message.CustomerId,
+                        OrderStatus = OrderStatus.Created.ToString()
+                    })
+                    .ToArray();
+
+                if (orders.Length > 0)
+                {
+                    var request = new V1AuditLogOrderRequest
+                    {
+                        Orders = orders
+                    };
+
+                    await client.LogOrder(request, cancellationToken);
+                }
+                else
+                {
+                    Console.WriteLine("Received order without items; skipping audit log.");
+                }
+                
+                await _channel.BasicAckAsync(args.DeliveryTag, false, cancellationToken);
+                sw.Stop();
+                Console.WriteLine($"Order created consumed in {sw.ElapsedMilliseconds} ms");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                await _channel.BasicNackAsync(args.DeliveryTag, false, true, cancellationToken);
+            }
+        };
+        
         await _channel.BasicConsumeAsync(
-            queue: _rabbitMqSettings.Value.OrderCreatedQueue,
-            autoAck: true,
+            queue: _rabbitMqSettings.Value.OrderCreatedQueue, 
+            autoAck: false, 
             consumer: _consumer,
             cancellationToken: cancellationToken);
     }
 
-    public async Task StopAsync(CancellationToken cancellationToken)
+    public Task StopAsync(CancellationToken cancellationToken)
     {
-        await Task.CompletedTask;
-        _connection?.Dispose();
+        _consumer = null;
         _channel?.Dispose();
+        _connection?.Dispose();
+        return Task.CompletedTask;
     }
 }

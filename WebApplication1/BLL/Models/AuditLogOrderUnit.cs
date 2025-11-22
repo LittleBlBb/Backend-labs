@@ -1,4 +1,4 @@
-﻿namespace WebApplication1.BLL.Models;
+﻿namespace WebApi.BLL.Models;
 
 public class AuditLogOrderUnit
 {

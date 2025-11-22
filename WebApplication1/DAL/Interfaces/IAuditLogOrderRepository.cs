@@ -1,10 +1,12 @@
-﻿using WebApplication1.DAL.Models;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using WebApi.DAL.Models;
 
-namespace WebApplication1.DAL.Interfaces;
+namespace WebApi.DAL.Interfaces;
 
 public interface IAuditLogOrderRepository
 {
-    Task<V1AuditLogOrderDal[]> BulkInsert(V1AuditLogOrderDal[] models, CancellationToken token);
-    
+    Task<V1AuditLogOrderDal[]> BulkInsert(V1AuditLogOrderDal[] model, CancellationToken token);
+
     Task<V1AuditLogOrderDal[]> Query(QueryAuditLogOrderDalModel model, CancellationToken token);
 }

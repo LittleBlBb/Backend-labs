@@ -1,9 +1,14 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Dapper;
-using WebApplication1.DAL.Interfaces;
-using WebApplication1.DAL.Models;
+using WebApi.DAL;
+using WebApi.DAL.Interfaces;
+using WebApi.DAL.Models;
 
-namespace WebApplication1.DAL.Repositories;
+namespace WebApi.DAL.Repositories;
 
 public class AuditLogOrderRepository(UnitOfWork unitOfWork) : IAuditLogOrderRepository
 {
@@ -12,14 +17,14 @@ public class AuditLogOrderRepository(UnitOfWork unitOfWork) : IAuditLogOrderRepo
         var sql = @"
             insert into audit_log_order
             (
-             order_id,
-             order_item_id,
-             customer_id,
-             order_status,
-             created_at,
-             updated_at
-             )
-            select 
+                order_id,
+                order_item_id,
+                customer_id,
+                order_status,
+                created_at,
+                updated_at
+            )
+            select
                 order_id,
                 order_item_id,
                 customer_id,
@@ -35,11 +40,9 @@ public class AuditLogOrderRepository(UnitOfWork unitOfWork) : IAuditLogOrderRepo
                 order_status,
                 created_at,
                 updated_at;
-            ";
-        
-        
-        var conn = await unitOfWork.GetConnection(token);
+        ";
 
+        var conn = await unitOfWork.GetConnection(token);
         var res = await conn.QueryAsync<V1AuditLogOrderDal>(new CommandDefinition(
             sql, new { Entries = models }, cancellationToken: token));
 

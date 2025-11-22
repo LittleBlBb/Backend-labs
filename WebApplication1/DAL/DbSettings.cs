@@ -1,6 +1,4 @@
-﻿namespace WebApplication1.Dal;
-
-public class DbSettings
+﻿public class DbSettings
 {
     public string MigrationConnectionString { get; set; }
     

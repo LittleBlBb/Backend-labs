@@ -1,19 +1,15 @@
-﻿using FluentValidation;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Models.Dto.Common;
 using Models.Dto.V1.Requests;
 using Models.Dto.V1.Responses;
-using WebApplication.BLL.Services;
-using WebApplication1.BLL.Models;
-using WebApplication1.Validators;
-using OrderUnit = WebApplication1.BLL.Models.OrderUnit;
-
-namespace WebApplication1.Controllers.V1;
+using FluentValidation;
+using WebApi.BLL.Models;
+using WebApi.BLL.Services;
 
 [Route("api/v1/audit")]
 public class AuditLogOrderController(
-    IValidatorFactory validatorFactory,
-    AuditLogOrderService auditLogOrderService
+    AuditLogOrderService auditLogOrderService,
+    IValidatorFactory validatorFactory
 ) : ControllerBase
 {
     [HttpPost("log-order")]
@@ -23,12 +19,13 @@ public class AuditLogOrderController(
     {
         var validationResult = await validatorFactory.GetValidator<V1AuditLogOrderRequest>()
             .ValidateAsync(request, token);
+
         if (!validationResult.IsValid)
         {
             return BadRequest(validationResult.ToDictionary());
         }
 
-        var res = request.Orders.Select(x => new AuditLogOrderUnit()
+        var units = request.Orders.Select(x => new AuditLogOrderUnit
         {
             OrderId = x.OrderId,
             OrderItemId = x.OrderItemId,
@@ -36,27 +33,28 @@ public class AuditLogOrderController(
             OrderStatus = x.OrderStatus
         }).ToArray();
 
-        var result = await auditLogOrderService.LogAsync(res, token);
+        var result = await auditLogOrderService.LogAsync(units, token);
 
-        return Ok(new V1AuditLogOrderResponse()
+        return Ok(new V1AuditLogOrderResponse
         {
             Orders = Map(result)
         });
     }
 
     [HttpPost("query")]
-    public async Task<ActionResult<V1QueryOrdersResponse>> Query(
+    public async Task<ActionResult<V1AuditLogOrderResponse>> Query(
         [FromBody] V1QueryAuditLogOrderRequest request,
         CancellationToken token)
     {
         var validationResult = await validatorFactory.GetValidator<V1QueryAuditLogOrderRequest>()
             .ValidateAsync(request, token);
+
         if (!validationResult.IsValid)
         {
             return BadRequest(validationResult.ToDictionary());
         }
 
-        var res = await auditLogOrderService.QueryAsync(new QueryAuditLogOrderModel
+        var result = await auditLogOrderService.QueryAsync(new QueryAuditLogOrderModel
         {
             Ids = request.Ids,
             OrderIds = request.OrderIds,
@@ -67,16 +65,15 @@ public class AuditLogOrderController(
             PageSize = request.PageSize
         }, token);
 
-
-        return Ok(new V1AuditLogOrderResponse()
+        return Ok(new V1AuditLogOrderResponse
         {
-            Orders = Map(res)
+            Orders = Map(result)
         });
     }
 
     private AuditLogOrder[] Map(AuditLogOrderUnit[] units)
     {
-        return units.Select(x => new AuditLogOrder()
+        return units.Select(x => new AuditLogOrder
         {
             Id = x.Id,
             OrderId = x.OrderId,

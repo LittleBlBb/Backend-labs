@@ -1,5 +1,4 @@
-﻿namespace WebApplication1.BLL.Models;
-public class OrderUnit
+﻿public class OrderUnit
 {
     public long Id { get; set; }
     

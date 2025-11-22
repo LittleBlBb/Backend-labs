@@ -1,5 +1,4 @@
-﻿namespace WebApplication1.DAL.Models;
-public class V1OrderItemDal
+﻿public class V1OrderItemDal
 {
     public long Id { get; set; }
 

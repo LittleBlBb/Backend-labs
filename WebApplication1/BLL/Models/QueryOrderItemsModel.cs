@@ -1,5 +1,4 @@
-﻿namespace WebApplication1.BLL.Models;
-public class QueryOrderItemsModel
+﻿public class QueryOrderItemsModel
 {
     public long[] Ids { get; set; }
 

@@ -1,7 +1,4 @@
-﻿using WebApplication1.DAL.Models;
-
-namespace WebApplication1.DAL.Interfaces;
-public interface IOrderItemRepository
+﻿public interface IOrderItemRepository
 {
     Task<V1OrderItemDal[]> BulkInsert(V1OrderItemDal[] model, CancellationToken token);
     

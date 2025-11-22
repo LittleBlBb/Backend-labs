@@ -1,9 +1,6 @@
-﻿using WebApplication1.DAL.Interfaces;
-using WebApplication1.DAL.Models;
-
-namespace WebApplication1.DAL.Repositories;
-using System.Text;
+﻿using System.Text;
 using Dapper;
+using WebApi.DAL;
 
 public class OrderItemRepository(UnitOfWork unitOfWork) : IOrderItemRepository
 {
@@ -12,17 +9,17 @@ public class OrderItemRepository(UnitOfWork unitOfWork) : IOrderItemRepository
         var sql = @"
             insert into order_items
             (
-             order_id,
-             product_id,
-             quantity,
-             product_title,
-             product_url,
-             price_cents,
-             price_currency,
-             created_at,
-             updated_at
+                order_id,
+                product_id,
+                quantity,
+                product_title,
+                product_url,
+                price_cents,
+                price_currency,
+                created_at,
+                updated_at
             )
-            select
+            select 
                 order_id,
                 product_id,
                 quantity,
@@ -32,8 +29,9 @@ public class OrderItemRepository(UnitOfWork unitOfWork) : IOrderItemRepository
                 price_currency,
                 created_at,
                 updated_at
-            from unnest(@OrderItems)
+            from unnest(@Items)
             returning
+                id,
                 order_id,
                 product_id,
                 quantity,
@@ -42,20 +40,21 @@ public class OrderItemRepository(UnitOfWork unitOfWork) : IOrderItemRepository
                 price_cents,
                 price_currency,
                 created_at,
-                updated_at
-            ";
+                updated_at;
+        ";
+
         var conn = await unitOfWork.GetConnection(token);
-        
         var res = await conn.QueryAsync<V1OrderItemDal>(new CommandDefinition(
-            sql, new { OrderItems = models }, cancellationToken: token));
+            sql, new { Items = models }, cancellationToken: token));
 
         return res.ToArray();
     }
-    
+
     public async Task<V1OrderItemDal[]> Query(QueryOrderItemsDalModel model, CancellationToken token)
     {
         var sql = new StringBuilder(@"
             select
+                id,
                 order_id,
                 product_id,
                 quantity,
@@ -83,15 +82,11 @@ public class OrderItemRepository(UnitOfWork unitOfWork) : IOrderItemRepository
             conditions.Add("order_id = ANY(@OrderIds)");
         }
 
+        // 👇 фильтра по ProductIds больше нет
+
         if (conditions.Count > 0)
         {
             sql.Append(" where " + string.Join(" and ", conditions));
-        }
-        
-        if (model.Offset > 0)
-        {
-            sql.Append(" offset @Offset");
-            param.Add("Offset", model.Offset);
         }
 
         if (model.Limit > 0)
@@ -99,11 +94,17 @@ public class OrderItemRepository(UnitOfWork unitOfWork) : IOrderItemRepository
             sql.Append(" limit @Limit");
             param.Add("Limit", model.Limit);
         }
-        
+
+        if (model.Offset > 0)
+        {
+            sql.Append(" offset @Offset");
+            param.Add("Offset", model.Offset);
+        }
+
         var conn = await unitOfWork.GetConnection(token);
-        var res = await conn.QueryAsync<V1OrderItemDal>(new CommandDefinition(sql.ToString(), param,
-            cancellationToken: token));
-        
+        var res = await conn.QueryAsync<V1OrderItemDal>(new CommandDefinition(
+            sql.ToString(), param, cancellationToken: token));
+
         return res.ToArray();
     }
 }

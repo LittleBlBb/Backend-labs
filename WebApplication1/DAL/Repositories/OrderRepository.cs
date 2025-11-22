@@ -1,9 +1,6 @@
-﻿using WebApplication1.DAL.Interfaces;
-using WebApplication1.DAL.Models;
-
-namespace WebApplication1.DAL.Repositories;
-using System.Text;
+﻿using System.Text;
 using Dapper;
+using WebApi.DAL;
 
 public class OrderRepository(UnitOfWork unitOfWork) : IOrderRepository
 {
@@ -109,3 +106,4 @@ public class OrderRepository(UnitOfWork unitOfWork) : IOrderRepository
         return res.ToArray();
     }
 }
+
