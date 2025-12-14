@@ -1,0 +1,37 @@
+# This is a generated file. Not intended for manual editing.
+services:
+  oms-consumer:
+    build:
+      context: "C:\\Users\\Kurdicks\\RiderProjects\\WebApplication1"
+      dockerfile: "Oms/Dockerfile"
+      target: "build"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net9.0/Oms.dll"
+    environment: {}
+    image: "oms:dev"
+    ports: []
+    volumes:
+    - "C:\\Users\\Kurdicks\\RiderProjects\\WebApplication1\\Oms:/app:rw"
+    - "C:\\Users\\Kurdicks\\RiderProjects\\WebApplication1:/src:rw"
+    - "C:\\Users\\Kurdicks\\.nuget\\packages:/root/.nuget/packages"
+    working_dir: "/app"
+  webapi:
+    build:
+      context: "C:\\Users\\Kurdicks\\RiderProjects\\WebApplication1"
+      dockerfile: "WebApplication1/Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net9.0/WebApplication1.dll"
+    environment:
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+    image: "webapplication1:dev"
+    ports: []
+    volumes:
+    - "C:\\Users\\Kurdicks\\RiderProjects\\WebApplication1\\WebApplication1:/app:rw"
+    - "C:\\Users\\Kurdicks\\RiderProjects\\WebApplication1:/src:rw"
+    - "C:\\Users\\Kurdicks\\.nuget\\packages:/home/app/.nuget/packages"
+    working_dir: "/app"

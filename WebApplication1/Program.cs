@@ -1,8 +1,10 @@
 using Dapper;
 using WebApi.DAL;
 using FluentValidation;
+using FluentValidation.AspNetCore;
 using Oms.Config;
 using Oms.Services;
+using Oms.Jobs;
 using System.Text.Json;
 using WebApi.BLL.Services;
 using WebApi.DAL.Interfaces;
@@ -41,6 +43,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 // добавляем swagger
 builder.Services.AddSwaggerGen();
+builder.Services.AddHostedService<OrderGenerator>();
 
 // собираем билдер в приложение
 var app = builder.Build();
