@@ -10,3 +10,4 @@ C:\Users\Kurdicks\RiderProjects\WebApplication1\Common\obj\Debug\net9.0\Common.d
 C:\Users\Kurdicks\RiderProjects\WebApplication1\Common\obj\Debug\net9.0\refint\Common.dll
 C:\Users\Kurdicks\RiderProjects\WebApplication1\Common\obj\Debug\net9.0\Common.pdb
 C:\Users\Kurdicks\RiderProjects\WebApplication1\Common\obj\Debug\net9.0\ref\Common.dll
+C:\Users\Kurdicks\RiderProjects\WebApplication1\Common\obj\Debug\net9.0\Common.sourcelink.json
