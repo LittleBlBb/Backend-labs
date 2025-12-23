@@ -10,4 +10,32 @@
       <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Include="obj\Common.csproj.nuget.dgspec.json" />
+      <Content Include="obj\Common.csproj.nuget.g.props" />
+      <Content Include="obj\Common.csproj.nuget.g.targets" />
+      <Content Include="obj\Debug\net9.0\Common.AssemblyInfoInputs.cache" />
+      <Content Include="obj\Debug\net9.0\Common.assets.cache" />
+      <Content Include="obj\Debug\net9.0\Common.csproj.AssemblyReference.cache" />
+      <Content Include="obj\Debug\net9.0\Common.csproj.CoreCompileInputs.cache" />
+      <Content Include="obj\Debug\net9.0\Common.csproj.FileListAbsolute.txt" />
+      <Content Include="obj\Debug\net9.0\Common.dll" />
+      <Content Include="obj\Debug\net9.0\Common.GeneratedMSBuildEditorConfig.editorconfig" />
+      <Content Include="obj\Debug\net9.0\Common.pdb" />
+      <Content Include="obj\Debug\net9.0\Common.sourcelink.json" />
+      <Content Include="obj\Debug\net9.0\refint\Common.dll" />
+      <Content Include="obj\Debug\net9.0\ref\Common.dll" />
+      <Content Include="obj\project.assets.json" />
+      <Content Include="obj\project.nuget.cache" />
+      <Content Include="obj\project.packagespec.json" />
+      <Content Include="obj\rider.project.model.nuget.info" />
+      <Content Include="obj\rider.project.restore.info" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Include="obj\Debug\net9.0\.NETCoreApp,Version=v9.0.AssemblyAttributes.cs" />
+      <Compile Include="obj\Debug\net9.0\Common.AssemblyInfo.cs" />
+      <Compile Include="obj\Debug\net9.0\Common.GlobalUsings.g.cs" />
+    </ItemGroup>
+
 </Project>

@@ -10,4 +10,41 @@
       <ProjectReference Include="..\Models\Models.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Include=".idea\.idea.Messages.dir\.idea\.gitignore" />
+      <Content Include=".idea\.idea.Messages.dir\.idea\encodings.xml" />
+      <Content Include=".idea\.idea.Messages.dir\.idea\indexLayout.xml" />
+      <Content Include="bin\Debug\net9.0\Messages.deps.json" />
+      <Content Include="bin\Debug\net9.0\Messages.dll" />
+      <Content Include="bin\Debug\net9.0\Messages.pdb" />
+      <Content Include="bin\Debug\net9.0\Models.dll" />
+      <Content Include="bin\Debug\net9.0\Models.pdb" />
+      <Content Include="obj\Debug\net9.0\Messages.AssemblyInfoInputs.cache" />
+      <Content Include="obj\Debug\net9.0\Messages.assets.cache" />
+      <Content Include="obj\Debug\net9.0\Messages.csproj.AssemblyReference.cache" />
+      <Content Include="obj\Debug\net9.0\Messages.csproj.CoreCompileInputs.cache" />
+      <Content Include="obj\Debug\net9.0\Messages.csproj.FileListAbsolute.txt" />
+      <Content Include="obj\Debug\net9.0\Messages.csproj.Up2Date" />
+      <Content Include="obj\Debug\net9.0\Messages.dll" />
+      <Content Include="obj\Debug\net9.0\Messages.GeneratedMSBuildEditorConfig.editorconfig" />
+      <Content Include="obj\Debug\net9.0\Messages.pdb" />
+      <Content Include="obj\Debug\net9.0\Messages.sourcelink.json" />
+      <Content Include="obj\Debug\net9.0\refint\Messages.dll" />
+      <Content Include="obj\Debug\net9.0\ref\Messages.dll" />
+      <Content Include="obj\Messages.csproj.nuget.dgspec.json" />
+      <Content Include="obj\Messages.csproj.nuget.g.props" />
+      <Content Include="obj\Messages.csproj.nuget.g.targets" />
+      <Content Include="obj\project.assets.json" />
+      <Content Include="obj\project.nuget.cache" />
+      <Content Include="obj\project.packagespec.json" />
+      <Content Include="obj\rider.project.model.nuget.info" />
+      <Content Include="obj\rider.project.restore.info" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Include="obj\Debug\net9.0\.NETCoreApp,Version=v9.0.AssemblyAttributes.cs" />
+      <Compile Include="obj\Debug\net9.0\Messages.AssemblyInfo.cs" />
+      <Compile Include="obj\Debug\net9.0\Messages.GlobalUsings.g.cs" />
+    </ItemGroup>
+
 </Project>

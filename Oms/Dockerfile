@@ -1,9 +1,9 @@
 ﻿FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
-COPY WebApi.sln ./
+COPY Shop.sln ./
 COPY Oms/Oms.csproj Oms/
-COPY WebApplication1/WebApplication1.csproj WebApplication1/
+COPY WebApi/WebApi.csproj WebApi/
 COPY Models/Models.csproj Models/
 COPY Common/Common.csproj Common/
 COPY Messages/Messages.csproj Messages/

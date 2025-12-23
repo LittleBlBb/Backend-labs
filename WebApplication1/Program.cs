@@ -16,7 +16,7 @@ var builder = WebApplication.CreateBuilder(args);
 DefaultTypeMap.MatchNamesWithUnderscores = true;
 
 builder.Services.Configure<RabbitMqSettings>(
-    builder.Configuration.GetSection(nameof(RabbitMqSettings)));
+    builder.Configuration.GetSection("RabbitMq"));
 
 builder.Services.AddSingleton<RabbitMqService>();
 
@@ -61,5 +61,4 @@ Migrations.Program.Main([]);
 
 // запускам приложение
 app.Run();
-
 

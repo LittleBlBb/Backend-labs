@@ -5,4 +5,34 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
+
+    <ItemGroup>
+      <Content Include="bin\Debug\net9.0\Models.deps.json" />
+      <Content Include="bin\Debug\net9.0\Models.dll" />
+      <Content Include="bin\Debug\net9.0\Models.pdb" />
+      <Content Include="obj\Debug\net9.0\Models.AssemblyInfoInputs.cache" />
+      <Content Include="obj\Debug\net9.0\Models.assets.cache" />
+      <Content Include="obj\Debug\net9.0\Models.csproj.CoreCompileInputs.cache" />
+      <Content Include="obj\Debug\net9.0\Models.csproj.FileListAbsolute.txt" />
+      <Content Include="obj\Debug\net9.0\Models.dll" />
+      <Content Include="obj\Debug\net9.0\Models.GeneratedMSBuildEditorConfig.editorconfig" />
+      <Content Include="obj\Debug\net9.0\Models.pdb" />
+      <Content Include="obj\Debug\net9.0\Models.sourcelink.json" />
+      <Content Include="obj\Debug\net9.0\refint\Models.dll" />
+      <Content Include="obj\Debug\net9.0\ref\Models.dll" />
+      <Content Include="obj\Models.csproj.nuget.dgspec.json" />
+      <Content Include="obj\Models.csproj.nuget.g.props" />
+      <Content Include="obj\Models.csproj.nuget.g.targets" />
+      <Content Include="obj\project.assets.json" />
+      <Content Include="obj\project.nuget.cache" />
+      <Content Include="obj\project.packagespec.json" />
+      <Content Include="obj\rider.project.model.nuget.info" />
+      <Content Include="obj\rider.project.restore.info" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Include="obj\Debug\net9.0\.NETCoreApp,Version=v9.0.AssemblyAttributes.cs" />
+      <Compile Include="obj\Debug\net9.0\Models.AssemblyInfo.cs" />
+      <Compile Include="obj\Debug\net9.0\Models.GlobalUsings.g.cs" />
+    </ItemGroup>
 </Project>
