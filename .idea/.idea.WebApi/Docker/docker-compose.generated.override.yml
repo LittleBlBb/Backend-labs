@@ -1,4 +1,5 @@
 # This is a generated file. Not intended for manual editing.
+version: "3.9"
 services:
   oms-consumer:
     build:
@@ -21,17 +22,16 @@ services:
     build:
       context: "C:\\Users\\Kurdicks\\RiderProjects\\WebApplication1"
       dockerfile: "WebApplication1/Dockerfile"
-      target: "base"
+      target: "build"
     command: []
     entrypoint:
     - "dotnet"
     - "/app/bin/Debug/net9.0/WebApplication1.dll"
-    environment:
-      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+    environment: {}
     image: "webapplication1:dev"
     ports: []
     volumes:
     - "C:\\Users\\Kurdicks\\RiderProjects\\WebApplication1\\WebApplication1:/app:rw"
     - "C:\\Users\\Kurdicks\\RiderProjects\\WebApplication1:/src:rw"
-    - "C:\\Users\\Kurdicks\\.nuget\\packages:/home/app/.nuget/packages"
+    - "C:\\Users\\Kurdicks\\.nuget\\packages:/root/.nuget/packages"
     working_dir: "/app"
